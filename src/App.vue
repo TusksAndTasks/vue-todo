@@ -1,10 +1,9 @@
 <template>
-  <p>{{ msg }}</p>
+  <NotesPage />
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-const msg = ref("Hello world");
+import NotesPage from "./components/NotesPage.vue";
 </script>
 
 <style lang="scss">
