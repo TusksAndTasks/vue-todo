@@ -1,11 +1,11 @@
 <template>
-  <NotesPageNote />
+  <NotesPageNote v-for="note in notesState" :noteData="note" :key="note.key" />
+  <NotePageForm />
 </template>
 
 <script setup lang="ts">
-// import { reactive } from "vue";
-// import { INote } from "@/types/interfaces";
+import { notesState } from "@/states/NotesState";
 
-// const noteList = reactive([] as Array<INote>);
 import NotesPageNote from "@/components/NotesPageNote.vue";
+import NotePageForm from "@/components/NotePageForm.vue";
 </script>
