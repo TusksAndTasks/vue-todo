@@ -1,10 +1,10 @@
 <template>
-  <form @submit.prevent="addNote">
+  <form @submit.prevent="handleSubmit">
     <input type="text" v-model="title" @keydown.enter.prevent />
     <NotePageTodo
-      v-for="todo in history[currentStep].todos"
+      v-for="todo in currentTodos"
       :todoData="todo"
-      :key="todo.key"
+      :key="todo.id"
       @updateTodo="updateTodo"
       @deleteTodo="deleteTodo"
     />
@@ -18,22 +18,26 @@
 
 <script setup lang="ts">
 import { INote, ITodo } from "@/types/interfaces";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { notesState } from "@/states/NotesState";
 import NotePageTodo from "@/components/NotePageTodo.vue";
 
-const props = defineProps<{ noteData?: INote; currentStep: number }>();
+const props = defineProps<{ noteId?: string; currentStep: number }>();
 const emits = defineEmits(["increase", "decrease", "setToNull"]);
 
-const title = ref(props.noteData?.title ? props.noteData?.title : "");
+const initialNote = notesState.notes[0];
+const title = ref(initialNote ? initialNote.title : "");
+const history = ref(
+  initialNote
+    ? [initialNote]
+    : ([{ title: "", id: "temporal", todos: [] }] as Array<INote>)
+);
+const currentTodos = computed(
+  () => history.value[props.currentStep].todos as ITodo[]
+);
+
 const inputValue = ref("");
 const inputStatus = ref(false);
-
-const history = ref(
-  props.noteData
-    ? [props.noteData]
-    : ([{ title: "", key: "temporal", todos: [] }] as Array<INote>)
-);
 
 function goForwardInHistory() {
   if (props.currentStep + 1 < history.value.length) {
@@ -47,16 +51,22 @@ function goBackInHistory() {
   }
 }
 
+function handleCorrectHistoryUpdate() {
+  if (props.currentStep < history.value.length - 1) {
+    history.value = history.value.slice(0, props.currentStep + 1);
+  }
+}
+
 function addTodo() {
   handleCorrectHistoryUpdate();
   history.value.push({
     title: title.value,
-    key: "temporal",
+    id: "temporal",
     todos: [
-      ...(history.value[props.currentStep].todos as ITodo[]),
+      ...currentTodos.value,
       {
         task: inputValue.value,
-        key: `task-${Date.now()}`,
+        id: `task-${Date.now()}`,
         isDone: inputStatus.value,
       },
     ],
@@ -70,41 +80,53 @@ function updateTodo(updatedTodo: ITodo) {
   handleCorrectHistoryUpdate();
   history.value.push({
     title: title.value,
-    key: "temporal",
-    todos: (history.value[props.currentStep].todos as ITodo[]).map((todo) =>
-      updatedTodo.key === todo.key ? updatedTodo : todo
+    id: "temporal",
+    todos: currentTodos.value.map((todo) =>
+      updatedTodo.id === todo.id ? updatedTodo : todo
     ),
   });
   emits("increase");
 }
 
-function deleteTodo(deletionKey: string) {
+function deleteTodo(deletionId: string) {
   handleCorrectHistoryUpdate();
   history.value.push({
     title: title.value,
-    key: "temporal",
-    todos: (history.value[props.currentStep].todos as ITodo[]).filter(
-      (todo) => todo.key !== deletionKey
-    ),
+    id: "temporal",
+    todos: currentTodos.value.filter((todo) => todo.id !== deletionId),
   });
   emits("increase");
 }
 
-function handleCorrectHistoryUpdate() {
-  if (props.currentStep < history.value.length - 1) {
-    history.value = history.value.slice(0, props.currentStep + 1);
+function handleSubmit() {
+  if (initialNote) {
+    updateNote();
+  } else {
+    addNote();
   }
 }
 
 function addNote() {
-  notesState.push({
+  notesState.notes.push({
     title: title.value,
-    key: `note-${Date.now()}`,
+    id: `note-${Date.now()}`,
     todos: history.value[props.currentStep].todos,
   });
-  title.value = props.noteData?.title ? title.value : "";
-  history.value = [{ title: "", key: "temporal", todos: [] }] as Array<INote>;
+  title.value = "";
+  history.value = [{ title: "", id: "temporal", todos: [] }] as Array<INote>;
   emits("setToNull");
+}
+
+function updateNote() {
+  notesState.notes = notesState.notes.map((note) =>
+    note.id === (initialNote as INote).id
+      ? {
+          title: title.value,
+          id: note.id,
+          todos: history.value[props.currentStep].todos,
+        }
+      : note
+  );
 }
 </script>
 

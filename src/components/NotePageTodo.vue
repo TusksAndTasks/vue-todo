@@ -9,7 +9,7 @@
   <div v-else @keydown.enter="sendUpdatedTodo">
     <input type="checkbox" v-model="status" />
     <input type="text" v-model="task" />
-    <button @click="sendTodoDeletionKey">Delete</button>
+    <button @click="sendTodoDeletionId">Delete</button>
     <button @click="toggleDisplay">Close</button>
   </div>
 </template>
@@ -21,7 +21,7 @@ import { ref } from "vue";
 const props = defineProps<{ todoData: ITodo }>();
 const emits = defineEmits<{
   (e: "updateTodo", updatedTodo: ITodo): void;
-  (e: "deleteTodo", key: string): void;
+  (e: "deleteTodo", id: string): void;
 }>();
 
 const task = ref(props.todoData.task);
@@ -31,15 +31,15 @@ const isDisplayMode = ref(true);
 function sendUpdatedTodo() {
   const updatedTodo = {
     task: task.value,
-    key: props.todoData.key,
+    id: props.todoData.id,
     isDone: status.value,
   };
   emits("updateTodo", updatedTodo);
   toggleDisplay();
 }
 
-function sendTodoDeletionKey() {
-  emits("deleteTodo", props.todoData.key);
+function sendTodoDeletionId() {
+  emits("deleteTodo", props.todoData.id);
 }
 
 function toggleDisplay() {

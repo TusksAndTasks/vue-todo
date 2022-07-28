@@ -1,7 +1,7 @@
 <template>
   <div>{{ noteData.title }}</div>
   <ul>
-    <li v-for="todo in todosShortList" :key="todo.key">{{ todo.task }}</li>
+    <li v-for="todo in todosShortList" :key="todo.id">{{ todo.task }}</li>
   </ul>
 </template>
 
