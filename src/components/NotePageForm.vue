@@ -1,16 +1,13 @@
 <template>
   <form @submit.prevent="addNote">
     <input type="text" v-model="title" @keydown.enter.prevent />
-    <ul>
-      <li
-        v-for="todo in history[currentStep].todos"
-        :key="todo.key"
-        :class="{ done: todo.isDone }"
-      >
-        {{ todo.task }}
-      </li>
-      <!--TODO: Вот эти листы переделать под отдельный компонент, который может переключаться на инпут-->
-    </ul>
+    <NotePageTodo
+      v-for="todo in history[currentStep].todos"
+      :todoData="todo"
+      :key="todo.key"
+      @updateTodo="updateTodo"
+      @deleteTodo="deleteTodo"
+    />
     <input type="text" v-model="inputValue" @keydown.enter.prevent="addTodo" />
     <input type="checkbox" v-model="inputStatus" @keydown.enter.prevent />
     <input type="submit" content="Submit" />
@@ -23,6 +20,7 @@
 import { INote, ITodo } from "@/types/interfaces";
 import { ref } from "vue";
 import { notesState } from "@/states/NotesState";
+import NotePageTodo from "@/components/NotePageTodo.vue";
 
 const props = defineProps<{ noteData?: INote; currentStep: number }>();
 const emits = defineEmits(["increase", "decrease", "setToNull"]);
@@ -51,15 +49,6 @@ function goBackInHistory() {
 
 function addTodo() {
   handleCorrectHistoryUpdate();
-  emits("increase");
-  inputValue.value = "";
-  inputStatus.value = false;
-}
-
-function handleCorrectHistoryUpdate() {
-  if (props.currentStep < history.value.length - 1) {
-    history.value = history.value.slice(0, props.currentStep + 1);
-  }
   history.value.push({
     title: title.value,
     key: "temporal",
@@ -72,6 +61,39 @@ function handleCorrectHistoryUpdate() {
       },
     ],
   });
+  emits("increase");
+  inputValue.value = "";
+  inputStatus.value = false;
+}
+
+function updateTodo(updatedTodo: ITodo) {
+  handleCorrectHistoryUpdate();
+  history.value.push({
+    title: title.value,
+    key: "temporal",
+    todos: (history.value[props.currentStep].todos as ITodo[]).map((todo) =>
+      updatedTodo.key === todo.key ? updatedTodo : todo
+    ),
+  });
+  emits("increase");
+}
+
+function deleteTodo(deletionKey: string) {
+  handleCorrectHistoryUpdate();
+  history.value.push({
+    title: title.value,
+    key: "temporal",
+    todos: (history.value[props.currentStep].todos as ITodo[]).filter(
+      (todo) => todo.key !== deletionKey
+    ),
+  });
+  emits("increase");
+}
+
+function handleCorrectHistoryUpdate() {
+  if (props.currentStep < history.value.length - 1) {
+    history.value = history.value.slice(0, props.currentStep + 1);
+  }
 }
 
 function addNote() {
@@ -86,8 +108,4 @@ function addNote() {
 }
 </script>
 
-<style>
-.done {
-  color: brown;
-}
-</style>
+<style></style>
