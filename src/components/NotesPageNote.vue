@@ -1,12 +1,14 @@
 <template>
   <div>{{ noteData.title }}</div>
   <ul>
-    <li v-for="todo in noteData.todos" :key="todo.key">{{ todo.task }}</li>
+    <li v-for="todo in todosShortList" :key="todo.key">{{ todo.task }}</li>
   </ul>
 </template>
 
 <script setup lang="ts">
 import { INote } from "@/types/interfaces";
+import { computed } from "vue";
 
-defineProps<{ noteData: INote }>();
+const props = defineProps<{ noteData: INote }>();
+const todosShortList = computed(() => props.noteData.todos?.slice(0, 3));
 </script>

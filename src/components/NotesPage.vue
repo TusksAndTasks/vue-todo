@@ -10,9 +10,13 @@
 
 <script setup lang="ts">
 import { notesState } from "@/states/NotesState";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import NotesPageNote from "@/components/NotesPageNote.vue";
 import NotePageForm from "@/components/NotePageForm.vue";
 
 const currentStep = ref(0);
+
+watch(notesState, () => {
+  localStorage.setItem("notesState", JSON.stringify(notesState));
+});
 </script>
