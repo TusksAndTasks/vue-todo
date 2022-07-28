@@ -25,8 +25,6 @@ import NotePageTodo from "@/components/NotePageTodo.vue";
 const props = defineProps<{ noteId?: string; currentStep: number }>();
 const emits = defineEmits(["increase", "decrease", "setToNull"]);
 
-console.log(props.noteId);
-
 const initialNote = notesState.notes.find((note) => note.id === props.noteId);
 const title = ref(initialNote ? initialNote.title : "");
 const history = ref(
