@@ -1,9 +1,11 @@
 <template>
-  <NotesPageNote
-    v-for="note in notesState.notes"
-    :noteData="note"
-    :key="note.id"
-  />
+  <div class="notes-container">
+    <NotesPageNote
+      v-for="note in notesState.notes"
+      :noteData="note"
+      :key="note.id"
+    />
+  </div>
   <NotePageForm
     :currentStep="currentStep"
     @increase="++currentStep"
@@ -24,3 +26,11 @@ watch(notesState, () => {
   localStorage.setItem("notesState", JSON.stringify(notesState.notes));
 });
 </script>
+
+<style lang="scss">
+.notes-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>

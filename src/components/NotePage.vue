@@ -6,7 +6,7 @@
     @decrease="--currentStep"
     @setToNull="currentStep = 0"
   />
-  <NotePageRenameModal :noteId="noteId" @delete="$router.push('/')" />
+  <NotePageDeleteModal :noteId="noteId" @delete="$router.push('/')" />
   <NotePageLeaveModal />
 </template>
 
@@ -15,7 +15,7 @@ import { notesState } from "@/states/NotesState";
 import { ref, watch } from "vue";
 import NotePageForm from "@/components/NotePageForm.vue";
 import { useRoute } from "vue-router";
-import NotePageRenameModal from "@/components/NotePageRenameModal.vue";
+import NotePageDeleteModal from "@/components/NotePageDeleteModal.vue";
 import NotePageLeaveModal from "@/components/NotePageLeaveModal.vue";
 
 const currentStep = ref(0);

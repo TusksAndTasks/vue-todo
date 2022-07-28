@@ -6,12 +6,16 @@
   >
     {{ todoData.task }}
   </div>
-  <div v-else @keydown.enter="sendUpdatedTodo">
-    <input type="checkbox" v-model="status" />
-    <input type="text" v-model="task" />
-    <button @click="sendTodoDeletionId">Delete</button>
+  <div v-else>
+    <input
+      type="text"
+      v-model="task"
+      @keydown.enter="sendUpdatedTodoAndClose"
+    />
     <button @click="toggleDisplay">Close</button>
   </div>
+  <input type="checkbox" v-model="status" @click="sendUpdatedTodo" />
+  <button @click="sendTodoDeletionId">Delete</button>
 </template>
 
 <script setup lang="ts">
@@ -35,7 +39,6 @@ function sendUpdatedTodo() {
     isDone: status.value,
   };
   emits("updateTodo", updatedTodo);
-  toggleDisplay();
 }
 
 function sendTodoDeletionId() {
@@ -45,6 +48,11 @@ function sendTodoDeletionId() {
 function toggleDisplay() {
   isDisplayMode.value = !isDisplayMode.value;
   task.value = props.todoData.task;
+}
+
+function sendUpdatedTodoAndClose() {
+  sendUpdatedTodo();
+  toggleDisplay();
 }
 </script>
 

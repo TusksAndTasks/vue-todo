@@ -1,9 +1,17 @@
 <template>
-  <button @click="handleModalDisplay" v-if="!isModalOpen">Delete</button>
-  <div v-if="isModalOpen">
-    <button @click="handleModalDisplay">Close</button>
-    <button @click="handleDeleteNote">Confirm</button>
-  </div>
+  <button
+    class="delete-note-button"
+    @click="handleModalDisplay"
+    v-if="!isModalOpen"
+  >
+    Delete
+  </button>
+  <Teleport to="body">
+    <div v-if="isModalOpen" class="delete-note-modal">
+      <button @click="handleModalDisplay">Close</button>
+      <button @click="handleDeleteNote">Confirm</button>
+    </div>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -29,3 +37,17 @@ function handleModalDisplay() {
   isModalOpen.value = !isModalOpen.value;
 }
 </script>
+
+<style>
+.delete-note-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.delete-note-modal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+}
+</style>

@@ -1,6 +1,11 @@
 <template>
   <form @submit.prevent="handleSubmit">
-    <input type="text" v-model="title" @keydown.enter.prevent />
+    <input
+      type="text"
+      v-model="title"
+      @keydown.enter.prevent
+      placeholder="Title"
+    />
     <NotePageTodo
       v-for="todo in currentTodos"
       :todoData="todo"
@@ -8,8 +13,20 @@
       @updateTodo="updateTodo"
       @deleteTodo="deleteTodo"
     />
-    <input type="text" v-model="inputValue" @keydown.enter.prevent="addTodo" />
-    <input type="checkbox" v-model="inputStatus" @keydown.enter.prevent />
+    <input
+      type="text"
+      v-model="inputValue"
+      @keydown.enter.prevent="addTodo"
+      placeholder="your new TODO"
+    />
+    <label :for="`check-${noteId}`">Mark your TODO as done:</label>
+    <input
+      type="checkbox"
+      v-model="inputStatus"
+      :id="`check-${noteId}`"
+      @keydown.enter.prevent
+    />
+    <label :for="`check-${noteId}`"></label>
     <input type="submit" content="Submit" />
   </form>
   <button @click="goBackInHistory">Back</button>
@@ -130,4 +147,14 @@ function updateNote() {
 }
 </script>
 
-<style></style>
+<style scoped lang="scss">
+form {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 400px;
+  width: 400px;
+  border: black 1px solid;
+}
+</style>
