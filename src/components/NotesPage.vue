@@ -6,12 +6,8 @@
       :key="note.id"
     />
   </div>
-  <NotePageForm
-    :currentStep="currentStep"
-    @increase="++currentStep"
-    @decrease="--currentStep"
-    @setToNull="currentStep = 0"
-  />
+  <NotePageForm @validationFail="isPopupOpen = true" />
+  <ValidationPopup v-if="isPopupOpen" @closePopup="isPopupOpen = false" />
 </template>
 
 <script setup lang="ts">
@@ -19,8 +15,9 @@ import { notesState } from "@/states/NotesState";
 import { ref, watch } from "vue";
 import NotesPageNote from "@/components/NotesPageNote.vue";
 import NotePageForm from "@/components/NotePageForm.vue";
+import ValidationPopup from "@/components/ValidationPopup.vue";
 
-const currentStep = ref(0);
+const isPopupOpen = ref(false);
 
 watch(notesState, () => {
   localStorage.setItem("notesState", JSON.stringify(notesState.notes));
@@ -31,6 +28,9 @@ watch(notesState, () => {
 .notes-container {
   display: flex;
   justify-content: center;
+  gap: 20px 40px;
   align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
 }
 </style>

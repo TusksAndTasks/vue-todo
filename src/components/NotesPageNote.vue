@@ -2,7 +2,7 @@
   <div class="note-wrapper">
     <router-link :to="pathToNote">
       <div
-        class="note-container"
+        class="note-like-item note"
         :class="{ 'multiple-todo-note': todosShortList.length === 3 }"
       >
         <h2>{{ noteData.title }}</h2>
@@ -31,8 +31,10 @@ const pathToNote = `/${props.noteData.id}`;
 const todosShortList = computed(() => props.noteData.todos?.slice(0, 3));
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 $paper-color: #f0f0e8;
+$dark-paper-color: #cbcbc2;
+$cover-dark: #343434;
 
 a {
   color: inherit;
@@ -80,7 +82,7 @@ a {
   }
 }
 
-.note-container {
+.note-like-item {
   display: flex;
   flex-flow: column;
   align-items: center;
@@ -90,12 +92,13 @@ a {
   box-shadow: 2px 0 2px rgba(0, 0, 0, 0.4);
   position: relative;
 
-  & h2 {
+  & h2,
+  .note-title-changer {
     margin: 0;
     width: 100%;
     text-align: center;
     height: 50px;
-    background-color: #343434;
+    background-color: $cover-dark;
     color: white;
     position: relative;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
@@ -103,8 +106,6 @@ a {
     &:before {
       content: "";
       position: absolute;
-      bottom: -20px;
-      left: 0;
       width: 100%;
       height: 20px;
       background-image: url("../assets/ripped-paper-effect.png");
@@ -112,13 +113,9 @@ a {
         brightness(0.91);
       background-size: contain;
       background-repeat: revert;
+      bottom: -20px;
+      left: 0;
     }
-  }
-
-  &:hover {
-    background-color: aqua;
-    transition: 0.5s;
-    cursor: pointer;
   }
 
   & ul {
@@ -128,15 +125,12 @@ a {
 
     & li {
       margin: 50px 0;
-      position: relative;
       width: 100%;
 
       &:after {
         content: "";
         display: block;
         width: 380px;
-        position: absolute;
-        left: -185px;
         height: 2px;
         border-bottom: 1px groove;
       }
@@ -146,6 +140,13 @@ a {
   .done-todo {
     color: #e77171;
     text-decoration: line-through;
+  }
+}
+
+.note {
+  &:hover {
+    background-color: $dark-paper-color;
+    transition: 0.3s;
   }
 }
 </style>

@@ -1,12 +1,9 @@
 <template>
-  <NotePageForm
-    :noteId="noteId"
-    :currentStep="currentStep"
-    @increase="++currentStep"
-    @decrease="--currentStep"
-    @setToNull="currentStep = 0"
-  />
-  <NotePageDeleteModal :noteId="noteId" @delete="$router.push('/')" />
+  <div class="form-wrapper">
+    <NotePageForm @validationFail="isPopupOpen = true" />
+    <NotePageDeleteModal :noteId="noteId" @delete="$router.push('/')" />
+  </div>
+  <ValidationPopup v-if="isPopupOpen" @closePopup="isPopupOpen = false" />
   <NotePageLeaveModal />
 </template>
 
@@ -17,11 +14,18 @@ import NotePageForm from "@/components/NotePageForm.vue";
 import { useRoute } from "vue-router";
 import NotePageDeleteModal from "@/components/NotePageDeleteModal.vue";
 import NotePageLeaveModal from "@/components/NotePageLeaveModal.vue";
+import ValidationPopup from "@/components/ValidationPopup.vue";
 
-const currentStep = ref(0);
+const isPopupOpen = ref(false);
 const noteId = useRoute().path.slice(1);
 
 watch(notesState, () => {
   localStorage.setItem("notesState", JSON.stringify(notesState.notes));
 });
 </script>
+
+<style>
+.form-wrapper {
+  position: relative;
+}
+</style>

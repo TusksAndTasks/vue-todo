@@ -9,3 +9,7 @@ export interface ITodo {
   isDone: boolean;
   id: string;
 }
+
+export interface ICheckEvent {
+  target: HTMLInputElement;
+}
