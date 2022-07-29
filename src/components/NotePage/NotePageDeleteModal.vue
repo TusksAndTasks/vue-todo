@@ -24,8 +24,6 @@ const emits = defineEmits<{ (e: "delete"): void }>();
 
 const isModalOpen = ref(false);
 
-console.log(props.noteId);
-
 function handleDeleteNote() {
   notesState.notes = notesState.notes.filter(
     (note) => note.id !== props.noteId
@@ -49,7 +47,7 @@ $dark-paper-color: #cbcbc2;
   right: 10px;
   background-color: transparent;
   border: none;
-  background-image: url("../assets/garbage-can.png");
+  background-image: url("../../assets/garbage-can.png");
   background-size: contain;
   background-repeat: no-repeat;
   width: 30px;

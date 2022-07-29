@@ -10,10 +10,10 @@
 <script setup lang="ts">
 import { notesState } from "@/states/NotesState";
 import { ref, watch } from "vue";
-import NotePageForm from "@/components/NotePageForm.vue";
+import NotePageForm from "@/components/NotePage/NotePageForm.vue";
 import { useRoute } from "vue-router";
-import NotePageDeleteModal from "@/components/NotePageDeleteModal.vue";
-import NotePageLeaveModal from "@/components/NotePageLeaveModal.vue";
+import NotePageDeleteModal from "@/components/NotePage/NotePageDeleteModal.vue";
+import NotePageLeaveModal from "@/components/NotePage/NotePageLeaveModal.vue";
 import ValidationPopup from "@/components/ValidationPopup.vue";
 
 const isPopupOpen = ref(false);

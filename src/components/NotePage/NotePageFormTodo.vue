@@ -1,5 +1,5 @@
 <template>
-  <div class="create-todo-inputs">
+  <div class="form-todo-inputs">
     <input
       type="checkbox"
       :id="`check-${todoData.id}`"
@@ -73,7 +73,7 @@ function toggleDisplay() {
   position: absolute;
   right: 5px;
   top: 5px;
-  background-image: url("../assets/garbage-can.png");
+  background-image: url("../../assets/garbage-can.png");
   width: 30px;
   height: 35px;
   background-size: contain;

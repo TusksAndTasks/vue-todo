@@ -1,7 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
-import NotesPage from "./components/NotesPage.vue";
-import NotePage from "./components/NotePage.vue";
+import NotesPage from "./components/NotesPage/NotesPage.vue";
+import NotePage from "./components/NotePage/NotePage.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
 const routes = [

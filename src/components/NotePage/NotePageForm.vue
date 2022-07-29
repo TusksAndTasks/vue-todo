@@ -6,17 +6,17 @@
         v-model="title"
         @keydown.enter.prevent
         placeholder="Title"
-        class="note-title-changer"
+        class="form-title-changer"
       />
       <div class="form-title-decorator"></div>
-      <NotePageTodo
+      <NotePageFormTodo
         v-for="todo in currentTodos"
         :todoData="todo"
         :key="todo.id"
         @updateTodo="updateTodo"
         @deleteTodo="deleteTodo"
       />
-      <div class="create-todo-inputs">
+      <div class="form-todo-inputs">
         <input
           type="checkbox"
           v-model="inputStatus"
@@ -43,27 +43,25 @@
 
 <script setup lang="ts">
 import { INote, ITodo } from "@/types/interfaces";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { notesState } from "@/states/NotesState";
-import NotePageTodo from "@/components/NotePageTodo.vue";
+import NotePageFormTodo from "@/components/NotePage/NotePageFormTodo.vue";
 import { useRoute } from "vue-router";
 
 const emits = defineEmits(["validationFail"]);
 
 const noteId = useRoute().path.slice(1);
 const initialNote = notesState.notes.find((note) => note.id === noteId);
-const title = ref(initialNote ? initialNote.title : "");
+
 const history = ref(
-  initialNote
-    ? [initialNote]
-    : ([{ title: "", id: "temporal", todos: [] }] as Array<INote>)
+  initialNote ? [initialNote.todos] : ([[]] as Array<ITodo[]>)
 );
 const currentStep = ref(0);
-
 const currentTodos = computed(
-  () => history.value[currentStep.value].todos as ITodo[]
+  () => history.value[currentStep.value] as ITodo[]
 );
 
+const title = ref(initialNote ? initialNote.title : "");
 const inputValue = ref("");
 const inputStatus = ref(false);
 
@@ -91,18 +89,14 @@ function addTodo() {
     return;
   }
   handleCorrectHistoryUpdate();
-  history.value.push({
-    title: title.value,
-    id: "temporal",
-    todos: [
-      ...currentTodos.value,
-      {
-        task: inputValue.value,
-        id: `task-${Date.now()}`,
-        isDone: inputStatus.value,
-      },
-    ],
-  });
+  history.value.push([
+    ...currentTodos.value,
+    {
+      task: inputValue.value,
+      id: `task-${Date.now()}`,
+      isDone: inputStatus.value,
+    },
+  ]);
   currentStep.value++;
   inputValue.value = "";
   inputStatus.value = false;
@@ -114,23 +108,19 @@ function updateTodo(updatedTodo: ITodo) {
     return;
   }
   handleCorrectHistoryUpdate();
-  history.value.push({
-    title: title.value,
-    id: "temporal",
-    todos: currentTodos.value.map((todo) =>
+  history.value.push(
+    currentTodos.value.map((todo) =>
       updatedTodo.id === todo.id ? updatedTodo : todo
-    ),
-  });
+    )
+  );
   currentStep.value++;
 }
 
 function deleteTodo(deletionId: string) {
   handleCorrectHistoryUpdate();
-  history.value.push({
-    title: title.value,
-    id: "temporal",
-    todos: currentTodos.value.filter((todo) => todo.id !== deletionId),
-  });
+  history.value.push(
+    currentTodos.value.filter((todo) => todo.id !== deletionId)
+  );
   currentStep.value++;
 }
 
@@ -150,10 +140,10 @@ function addNote() {
   notesState.notes.push({
     title: title.value,
     id: `note-${Date.now()}`,
-    todos: history.value[currentStep.value].todos,
+    todos: history.value[currentStep.value],
   });
   title.value = "";
-  history.value = [{ title: "", id: "temporal", todos: [] }] as Array<INote>;
+  history.value = [[]] as Array<ITodo[]>;
   currentStep.value = 0;
 }
 
@@ -163,7 +153,7 @@ function updateNote() {
       ? {
           title: title.value,
           id: note.id,
-          todos: history.value[currentStep.value].todos,
+          todos: history.value[currentStep.value],
         }
       : note
   );
@@ -214,7 +204,7 @@ form {
   }
 }
 
-.create-todo-inputs {
+.form-todo-inputs {
   display: flex;
   width: 100%;
   justify-content: center;
@@ -233,13 +223,13 @@ form {
     cursor: pointer;
 
     &:hover ~ label {
-      background-image: url("../assets/checkmark.png");
+      background-image: url("../../assets/checkmark.png");
       background-size: contain;
       filter: grayscale(0.9) contrast(0.5);
     }
 
     &:checked ~ label {
-      background-image: url("../assets/checkmark.png");
+      background-image: url("../../assets/checkmark.png");
       background-size: contain;
       filter: brightness(0.7) contrast(0.5);
     }
@@ -258,15 +248,18 @@ form {
   }
 }
 
-.note-title-changer {
+.form-title-changer {
   width: 100% !important;
   height: 50px !important;
   background-color: $cover-dark !important;
   font-size: 30px !important;
+  color: white;
+  text-align: center;
 
   &::placeholder {
     color: white;
     font-size: 20px;
+    text-align: center;
   }
 }
 
@@ -276,7 +269,7 @@ form {
   width: 100%;
   height: 20px;
   top: 54px;
-  background-image: url("../assets/ripped-paper-effect.png");
+  background-image: url("../../assets/ripped-paper-effect.png");
   filter: sepia(35%) drop-shadow(0px 1px 4px rgba(0, 0, 0, 0.2))
     brightness(0.91);
   background-size: contain;
