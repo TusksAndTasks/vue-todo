@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { ICheckEvent, ITodo } from "@/types/interfaces";
-import { ref, watch } from "vue";
+import { ref } from "vue";
 
 const props = defineProps<{ todoData: ITodo }>();
 const emits = defineEmits<{
