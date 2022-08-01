@@ -13,7 +13,7 @@
         v-for="todo in currentTodos"
         :todoData="todo"
         :key="todo.id"
-        @updateTodo="updateTodo"
+        @updateTodo="validate(updateTodo, $event)"
         @deleteTodo="deleteTodo"
       />
       <div class="form-todo-inputs">
@@ -27,11 +27,10 @@
         <input
           type="text"
           v-model="inputValue"
-          @keydown.enter.prevent="addTodo"
+          @keydown.enter.prevent="validate(addTodo, inputValue)"
           placeholder="your new TODO"
         />
       </div>
-      <label :for="`check-${noteId}`"></label>
       <input type="submit" value="Confirm changes" />
     </form>
     <div class="form-history-buttons">
@@ -43,10 +42,11 @@
 
 <script setup lang="ts">
 import { INote, ITodo } from "@/types/interfaces";
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { notesState } from "@/states/NotesState";
 import NotePageFormTodo from "@/components/NotePage/NotePageFormTodo.vue";
 import { useRoute } from "vue-router";
+import { validatedFunction, validationArgument } from "@/types/types";
 
 const emits = defineEmits(["validationFail"]);
 
@@ -83,11 +83,15 @@ function handleCorrectHistoryUpdate() {
   }
 }
 
+function deleteTodo(deletionId: string) {
+  handleCorrectHistoryUpdate();
+  history.value.push(
+    currentTodos.value.filter((todo) => todo.id !== deletionId)
+  );
+  currentStep.value++;
+}
+
 function addTodo() {
-  if (!inputValue.value) {
-    emits("validationFail");
-    return;
-  }
   handleCorrectHistoryUpdate();
   history.value.push([
     ...currentTodos.value,
@@ -103,10 +107,6 @@ function addTodo() {
 }
 
 function updateTodo(updatedTodo: ITodo) {
-  if (!updatedTodo.task) {
-    emits("validationFail");
-    return;
-  }
   handleCorrectHistoryUpdate();
   history.value.push(
     currentTodos.value.map((todo) =>
@@ -116,27 +116,25 @@ function updateTodo(updatedTodo: ITodo) {
   currentStep.value++;
 }
 
-function deleteTodo(deletionId: string) {
-  handleCorrectHistoryUpdate();
-  history.value.push(
-    currentTodos.value.filter((todo) => todo.id !== deletionId)
-  );
-  currentStep.value++;
+function validate(func: validatedFunction, arg: validationArgument) {
+  if (typeof arg === "string" && arg) {
+    (func as () => void)();
+  } else if (typeof arg !== "string" && arg.task) {
+    func(arg);
+  } else {
+    emits("validationFail");
+  }
 }
 
 function handleSubmit() {
   if (initialNote) {
-    updateNote();
+    validate(updateNote, title.value);
   } else {
-    addNote();
+    validate(addNote, title.value);
   }
 }
 
 function addNote() {
-  if (!title.value) {
-    emits("validationFail");
-    return;
-  }
   notesState.notes.push({
     title: title.value,
     id: `note-${Date.now()}`,
@@ -166,9 +164,6 @@ $dark-paper-color: #cbcbc2;
 $paper-color: #f0f0e8;
 
 form {
-  display: flex;
-  flex-flow: column;
-  align-items: center;
   justify-content: space-between;
   min-height: 400px;
   max-height: 800px;

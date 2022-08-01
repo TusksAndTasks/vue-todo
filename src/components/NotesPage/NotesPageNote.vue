@@ -10,7 +10,7 @@
           <li
             v-for="todo in todosShortList"
             :key="todo.id"
-            :class="{ 'done-todo': todo.isDone }"
+            :class="{ 'todo-done': todo.isDone }"
           >
             {{ todo.task }}
           </li>
@@ -135,11 +135,6 @@ a {
         border-bottom: 1px groove;
       }
     }
-  }
-
-  .done-todo {
-    color: #e77171;
-    text-decoration: line-through;
   }
 }
 

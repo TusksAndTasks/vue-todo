@@ -8,7 +8,7 @@
     />
     <label :for="`check-${todoData.id}`"></label>
     <div
-      :class="{ done: todoData.isDone }"
+      :class="{ 'todo-done': todoData.isDone }"
       v-if="isDisplayMode"
       @click="toggleDisplay"
       class="todo-data"
@@ -64,7 +64,7 @@ function toggleDisplay() {
 </script>
 
 <style lang="scss">
-.done {
+.todo-done {
   color: #e77171;
   text-decoration: line-through;
 }
